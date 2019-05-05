@@ -6,8 +6,10 @@ const int b1=8,b2=9,b3=10,b4=11;
 const int rs = 7, en = 6, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+int index = 0;
+int times[] = { 30,60,120,300,600};
 int turn = 0;
-int time1=30, time2=30;
+int time1=times[0], time2=times[0];
 
 // 0=setup, 1=game
 int mode = 0;
@@ -25,10 +27,16 @@ void setup() {
   pinMode(b4, INPUT);
   pinMode(buzzer, OUTPUT);
   mgr.addListener(new EvtPinListener(b1,  (EvtAction)buttonOne));
-  mgr.addListener(new EvtPinListener(b2,  (EvtAction)buttonTwo));
-  mgr.addListener(new EvtPinListener(b3,  (EvtAction)buttonThree));
+  mgr.addListener(new EvtPinListener(b2, 300,  (EvtAction)buttonTwo));
+  mgr.addListener(new EvtPinListener(b3, 300,  (EvtAction)buttonThree));
   mgr.addListener(new EvtPinListener(b4,  (EvtAction)buttonFour));
   mgr.addListener(new EvtTimeListener(1000, true, (EvtAction)tick));
+
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(time1);
+  lcd.setCursor(0,1);
+  lcd.print(time2);
 }
 
 //Player 1
@@ -39,12 +47,35 @@ bool buttonOne(){
 
 // Change time
 bool buttonTwo(){
+  if(mode == 0){
+    if(index <= 3){
+      index = index + 1;
+    }else{
+      index = 0;
+    }
+  time1 = times[index];
+  time2 = times[index];
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(time1);
+  lcd.setCursor(0,1);
+  lcd.print(time2);
+  }
+
+
   return true;
 }
 
 // Start/pause
 bool buttonThree(){
- mode==0?mode=1:mode=0;
+   digitalWrite(buzzer, HIGH);
+  delay(500);
+  digitalWrite(buzzer, LOW);
+  if(mode == 0){
+    mode = 1;
+  }else{
+    mode = 0;
+  }
   return true;
 }
 
@@ -61,7 +92,6 @@ bool tick(){
     }else{
       time2--;
     }
-  }
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print(time1);
@@ -74,6 +104,9 @@ bool tick(){
       delay(2000);
       mgr.resetContext();
     }
+  }
+
+
   return true;
 }
 
