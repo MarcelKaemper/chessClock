@@ -52,17 +52,18 @@ bool tick(){
   }else{
     time2--;
   }
-  if(time1 <= 0 || time2 <= 0){
-    digitalWrite(buzzer, HIGH);
-    delay(300);
-    digitalWrite(buzzer, LOW);
-    mgr.resetContext();
-  }
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.println(time1);
   lcd.setCursor(0,1);
   lcd.println(time2);
+  if(time1 <= 0 || time2 <= 0){
+    digitalWrite(buzzer, HIGH);
+    delay(500);
+    digitalWrite(buzzer, LOW);
+    delay(2000);
+    mgr.resetContext();
+  }
   return true;
 }
 
