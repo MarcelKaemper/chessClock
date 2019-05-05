@@ -9,6 +9,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int index = 0;
 int times[] = { 30,60,120,300,600};
 int turn = 0;
+int lastTimes[2];
 int time1=times[0], time2=times[0];
 
 // 0=setup, 1=game
@@ -68,12 +69,19 @@ bool buttonTwo(){
 
 // Start/pause
 bool buttonThree(){
-   digitalWrite(buzzer, HIGH);
+  digitalWrite(buzzer, HIGH);
   delay(500);
   digitalWrite(buzzer, LOW);
+
   if(mode == 0){
+     // If game restarted/Time different than before pause
+     if(lastTimes[0] != time1 || lastTimes[1] != time2){
+      turn = 0;
+     }
     mode = 1;
   }else{
+    lastTimes[0] = time1;
+    lastTimes[1] = time2;
     mode = 0;
   }
   return true;
